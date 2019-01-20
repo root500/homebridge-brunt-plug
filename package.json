@@ -1,0 +1,50 @@
+{
+  "name": "homebridge-brunt-plug",
+  "version": "1.0.0",
+  "description": "Homebridge platform plugin for Brunt plug",
+  "main": "dist/index.js",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "rollup -c -w",
+    "build": "rollup -c",
+    "prepublishOnly": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/root500/homebridge-brunt-plug.git"
+  },
+  "author": "Root",
+  "license": "ISC",
+  "keywords": [
+    "homebridge-plugin"
+  ],
+  "bugs": {
+    "url": "https://github.com/root500/homebridge-brunt-plug/issues"
+  },
+  "homepage": "https://github.com/root500/homebridge-brunt-plug#readme",
+  "engines": {
+    "node": ">=0.12.0",
+    "homebridge": ">=0.3.0"
+  },
+  "dependencies": {
+    "@babel/polyfill": "^7.2.5",
+    "cookie": "^0.3.1",
+    "lodash": "^4.17.11",
+    "request": "^2.88.0",
+    "url": "^0.11.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.2.2",
+    "@babel/plugin-proposal-class-properties": "^7.1.0",
+    "@babel/preset-env": "^7.1.6",
+    "@babel/preset-flow": "^7.0.0",
+    "flow-bin": "^0.86.0",
+    "rollup": "^0.67.1",
+    "rollup-plugin-babel": "^4.0.3",
+    "rollup-plugin-commonjs": "^9.2.0",
+    "rollup-plugin-node-resolve": "^3.4.0"
+  }
+}
