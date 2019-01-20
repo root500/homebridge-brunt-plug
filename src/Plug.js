@@ -4,6 +4,8 @@ import deasync from 'deasync';
 
 import Brunt from './service/Brunt';
 
+const UPDATE_TIME = 5000;
+
 let Service;
 let Characteristic;
 
@@ -11,15 +13,19 @@ class Plug {
     constructor(log, config) {
         this.log = log;
         this.config = config;
-        this.config = {
-            user: 'root500@gmail.com',
-            password: '@brunt1024',
-        };
+
+        if(
+            !this.config.user || typeof this.config.user !== 'string' ||
+            !this.config.password || typeof this.config.password !== 'string'
+        ) {
+            throw new Error('Can\'t find user information.');
+        }
 
         this.things = {};
         this.services = {};
         this.brunt = new Brunt(this.config);
         this.brunt.debug = false;
+        this.isUpdate = true;
     }
 
     getServices() {
@@ -51,10 +57,8 @@ class Plug {
 
         services = services.concat(switches);
 
-        setTimeout(() => {
-            console.log('[Brunt Plug] start checking energy consum...');
-            this.startEnergyConsum();
-        }, 1000);
+        console.log('[Brunt Plug] start checking device...');
+        this.checkInterval();
 
         return services;
     }
@@ -70,12 +74,10 @@ class Plug {
         console.log(`[Brunt Plug] Things - ${things.length} thing(s) found`,);
 
         _.forEach(things, (thing) => {
-            // console.log(thing);
-
             const id = thing.SERIAL;
             const name = thing.NAME;
             const switchService = new Service.Switch(thing.NAME);
-            const sensor = new Service.TemperatureSensor(thing.NAME);
+            const sensor = new Service.TemperatureSensor(thing.NAME + ' 전력');
 
             console.log(`\t ${id} - ${name}`);
 
@@ -125,24 +127,10 @@ class Plug {
         callback(services);
     }
 
-    async startEnergyConsum() {
+    async checkInterval() {
         setInterval(async () => {
-            await this.getEnergyConsum();
+            await this.getThings();
         }, 1000);
-    }
-
-    /**
-     * 기기 전력 사용량 체크
-     */
-    async getEnergyConsum() {
-        // 전체 기기 정보 업데이트
-        await this.getThings();
-
-        _.forEach(this.things, (thing, id) => {
-            if(thing.power === '1') {
-                console.log(`[Brunt Plug] ${thing.NAME} (${id}) - ${thing.voltage / 10}V ${thing.ampere}A ${thing.watt / 10}W ${thing.temperature}°C`);
-            }
-        });
     }
 
     async getThings() {
@@ -156,8 +144,13 @@ class Plug {
             const isPower = thing.power === '1';
 
             this.things[id] = thing;
-            this.services[id].switch.updateCharacteristic(Characteristic.On, isPower);
+
+            this.isUpdate && this.services[id].switch.updateCharacteristic(Characteristic.On, isPower);
             this.services[id].sensor.setCharacteristic(Characteristic.CurrentTemperature, thing.watt / 10 + 'W');
+
+            if(isPower) {
+                console.log(`[Brunt Plug] ${thing.NAME} (${id}) - ${thing.voltage / 10}V ${thing.ampere}A ${thing.watt / 10}W ${thing.temperature}°C`);
+            }
         });
 
         return things;
@@ -202,6 +195,12 @@ class Plug {
         if(!data) throw err;
 
         this.things[id].power = state;
+
+        this.isUpdate = false;
+
+        setTimeout(() => {
+            this.isUpdate = true;
+        }, UPDATE_TIME);
 
         return data;
     }
