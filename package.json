@@ -1,6 +1,6 @@
 {
   "name": "homebridge-brunt-plug",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Homebridge platform plugin for Brunt plug",
   "main": "dist/index.js",
   "files": [
