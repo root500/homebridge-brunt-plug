@@ -19,7 +19,7 @@ class Plug {
         this.things = {};
         this.services = {};
         this.brunt = new Brunt(this.config);
-        // this.brunt.debug = true;
+        this.brunt.debug = false;
     }
 
     getServices() {
@@ -27,6 +27,7 @@ class Plug {
 
         let services = [];
         let switches = [];
+        let lock = true;
 
         // 기기 정보 등록
         this.infoService = new Service.AccessoryInformation();
@@ -40,8 +41,9 @@ class Plug {
 
         this.getSwitches((result) => {
             switches = result;
+            lock = false;
         });
-        while(!switches) deasync.sleep(1000);
+        while(lock) deasync.sleep(1000);
 
         if(!switches.length) {
             throw new Error('There are no device on your account.');
