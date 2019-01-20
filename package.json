@@ -1,6 +1,6 @@
 {
   "name": "homebridge-brunt-plug",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "Homebridge platform plugin for Brunt plug",
   "main": "dist/index.js",
   "files": [
@@ -16,7 +16,7 @@
     "type": "git",
     "url": "git+https://github.com/root500/homebridge-brunt-plug.git"
   },
-  "author": "Root",
+  "author": "Jun Choi <root500@gmail.com> (https://github.com/root500)",
   "license": "ISC",
   "keywords": [
     "homebridge-plugin"
